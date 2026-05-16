@@ -248,7 +248,16 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+
+/**
+ * ⚡ Bolt Optimization:
+ * Memoizing ChatMessage prevents unnecessary re-renders of all previous messages
+ * when new messages are added to the list. This reduces the rendering cost from
+ * O(N) to O(1) for new message additions, where N is the number of messages.
+ * This is particularly impactful here as each message involves complex Markdown
+ * parsing and syntax highlighting.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +329,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
