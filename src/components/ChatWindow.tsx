@@ -248,7 +248,12 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+/**
+ * Memoized ChatMessage component to prevent unnecessary re-renders.
+ * As the message list grows, previous messages don't change, so we can skip their re-rendering.
+ * Expected impact: Reduces re-renders from O(N) to O(1) when adding a new message.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +325,9 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
