@@ -248,7 +248,7 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -311,8 +311,9 @@ const ChatMessage = ({ message }: { message: Message }) => {
           </span>
         ) : (
           <span
-            className={`absolute bottom-0 right-0 rounded-full border-2 border-white/30 bg-zinc-800 p-1 px-2 ${showCopy ? "visible" : "hidden"
-              }`}
+            className={`absolute bottom-0 right-0 rounded-full border-2 border-white/30 bg-zinc-800 p-1 px-2 ${
+              showCopy ? "visible" : "hidden"
+            }`}
           >
             <FaCopy className="text-white-300 cursor-pointer" />
           </span>
@@ -320,7 +321,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
