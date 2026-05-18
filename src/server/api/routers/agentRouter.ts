@@ -22,19 +22,16 @@ export const agentRouter = createTRPCRouter({
         },
       });
 
-      const all = input.tasks.map((e, i) => {
-        return prisma.agentTask.create({
-          data: {
-            agentId: agent.id,
-            type: e.type,
-            info: e.info,
-            value: e.value,
-            sort: i,
-          },
-        });
+      // Use createMany to batch the insertion of tasks into a single database roundtrip
+      await prisma.agentTask.createMany({
+        data: input.tasks.map((e, i) => ({
+          agentId: agent.id,
+          type: e.type,
+          info: e.info,
+          value: e.value,
+          sort: i,
+        })),
       });
-
-      await Promise.all(all);
       return agent;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
