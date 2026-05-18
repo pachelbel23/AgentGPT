@@ -1,0 +1,3 @@
+## 2026-05-18 - Optimized Database Writes and React Re-renders
+**Learning:** Found an N+1 write pattern in `agentRouter.ts` where multiple tasks were created using individual `prisma.create` calls. In a Next.js/tRPC stack using MySQL, `prisma.createMany` is significantly more efficient for batch insertions. Also identified that list-heavy components like `ChatMessage` and `Task` were re-rendering unnecessarily as the agent added new items.
+**Action:** Use `createMany` for batch database operations and `React.memo` (with `displayName`) for frequently updated list items to maintain O(1) render cost for existing items.
