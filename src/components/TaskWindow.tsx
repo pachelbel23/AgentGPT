@@ -24,7 +24,12 @@ export const TaskWindow = ({ tasks }: TaskWindowProps) => {
   );
 };
 
-const Task = ({ task }: { task: Message }) => {
+/**
+ * Memoized Task component to prevent unnecessary re-renders
+ * when the task list is updated.
+ * Expected impact: Significant reduction in rendering overhead for long-running agents.
+ */
+const Task = React.memo(({ task }: { task: Message }) => {
   return (
     <FadeIn>
       <div className="w-full rounded-md border-2 border-white/20 p-2 text-sm text-white hover:border-white/40">
@@ -32,4 +37,5 @@ const Task = ({ task }: { task: Message }) => {
       </div>
     </FadeIn>
   );
-};
+});
+Task.displayName = "Task";
