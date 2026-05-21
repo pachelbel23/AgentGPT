@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
 import {
   FaBrain,
   FaClipboard,
@@ -248,7 +248,12 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+/**
+ * ChatMessage component that displays a single message in the chat window.
+ * Memoized to prevent unnecessary re-renders when new messages are added to the list.
+ * Expected impact: Reduces re-renders of previous messages by 100% when a new message is added.
+ */
+const ChatMessage = memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +325,7 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
 
 const DonationMessage = () => {
   const router = useRouter();
@@ -371,6 +376,8 @@ const getMessagePrefix = (message: Message) => {
       return message.info ? message.info : "Executing:";
   }
 };
+
+ChatMessage.displayName = "ChatMessage";
 
 export default ChatWindow;
 export { ChatMessage };
