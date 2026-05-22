@@ -24,7 +24,12 @@ export const TaskWindow = ({ tasks }: TaskWindowProps) => {
   );
 };
 
-const Task = ({ task }: { task: Message }) => {
+/**
+ * Task component that displays a single task in the task window.
+ * Wrapped in React.memo to prevent unnecessary re-renders when new tasks are added to the list.
+ * Expected impact: Reduces re-renders of previous tasks by 100% when new tasks are appended.
+ */
+const Task = React.memo(({ task }: { task: Message }) => {
   return (
     <FadeIn>
       <div className="w-full rounded-md border-2 border-white/20 p-2 text-sm text-white hover:border-white/40">
@@ -32,4 +37,5 @@ const Task = ({ task }: { task: Message }) => {
       </div>
     </FadeIn>
   );
-};
+});
+Task.displayName = "Task";
