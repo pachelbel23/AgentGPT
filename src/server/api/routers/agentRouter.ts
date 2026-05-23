@@ -11,6 +11,12 @@ const saveAgentParser = z.object({
 });
 
 export const agentRouter = createTRPCRouter({
+  /**
+   * Creates a new agent and its associated tasks.
+   *
+   * Optimization: Uses `prisma.agentTask.createMany` to batch task creation in a single database roundtrip.
+   * Expected impact: Reduces database roundtrips from N+1 to 2 (one for the agent, one for all tasks).
+   */
   create: protectedProcedure
     .input(saveAgentParser)
     .mutation(async ({ input, ctx }) => {
@@ -22,19 +28,16 @@ export const agentRouter = createTRPCRouter({
         },
       });
 
-      const all = input.tasks.map((e, i) => {
-        return prisma.agentTask.create({
-          data: {
-            agentId: agent.id,
-            type: e.type,
-            info: e.info,
-            value: e.value,
-            sort: i,
-          },
-        });
+      await prisma.agentTask.createMany({
+        data: input.tasks.map((e, i) => ({
+          agentId: agent.id,
+          type: e.type,
+          info: e.info,
+          value: e.value,
+          sort: i,
+        })),
       });
 
-      await Promise.all(all);
       return agent;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
