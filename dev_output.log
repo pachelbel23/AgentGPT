@@ -1,0 +1,22 @@
+
+> agent-gpt@0.1.0 dev
+> next dev
+
+(node:67343) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+❌ Invalid environment variables:
+ DATABASE_URL: Required
+ NEXTAUTH_URL: Required
+ OPENAI_API_KEY: Required
+
+file:///app/src/env/server.mjs:16
+  throw new Error("Invalid environment variables");
+        ^
+
+Error: Invalid environment variables
+    at file:///app/src/env/server.mjs:16:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async file:///app/next.config.mjs:6:38
+
+Node.js v22.22.1
