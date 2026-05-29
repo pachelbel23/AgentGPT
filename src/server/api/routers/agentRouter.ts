@@ -14,28 +14,27 @@ export const agentRouter = createTRPCRouter({
   create: protectedProcedure
     .input(saveAgentParser)
     .mutation(async ({ input, ctx }) => {
-      const agent = await prisma.agent.create({
+      /**
+       * Optimization: Use Prisma's nested create to batch agent and task creation.
+       * This reduces the number of database calls from 1 + N (where N is the number of tasks) to 1.
+       * It also ensures that the entire operation is performed within a single database transaction.
+       * Expected impact: Significant reduction in latency for agent creation, especially with many tasks.
+       */
+      return await prisma.agent.create({
         data: {
           name: input.name,
           goal: input.goal,
-          userId: ctx.session?.user?.id,
+          userId: ctx.session.user.id,
+          tasks: {
+            create: input.tasks.map((e, i) => ({
+              type: e.type,
+              info: e.info,
+              value: e.value,
+              sort: i,
+            })),
+          },
         },
       });
-
-      const all = input.tasks.map((e, i) => {
-        return prisma.agentTask.create({
-          data: {
-            agentId: agent.id,
-            type: e.type,
-            info: e.info,
-            value: e.value,
-            sort: i,
-          },
-        });
-      });
-
-      await Promise.all(all);
-      return agent;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return prisma.agent.findMany({
