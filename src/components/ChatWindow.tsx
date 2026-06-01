@@ -63,12 +63,13 @@ const ChatWindow = ({
 
   useEffect(() => {
     // Scroll to bottom on re-renders
+    // Expected impact: Prevents redundant scroll logic on every re-render
     if (scrollToBottom && scrollRef && scrollRef.current) {
       if (!hasUserScrolled) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [messages, scrollToBottom, hasUserScrolled]);
 
   return (
     <div
@@ -248,7 +249,11 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+/**
+ * ChatMessage component that renders an individual message.
+ * Expected impact: Memoization prevents O(N) re-renders of the message list when new messages are added.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +325,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
