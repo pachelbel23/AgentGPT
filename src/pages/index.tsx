@@ -66,15 +66,24 @@ const Home: NextPage = () => {
     }
   }, [agent]);
 
-  const handleAddMessage = (message: Message) => {
+  /**
+   * Expected impact: Stable reference prevents re-renders of components receiving this as a prop.
+   */
+  const handleAddMessage = React.useCallback((message: Message) => {
     setMessages((prev) => [...prev, message]);
-  };
+  }, []);
 
-  const tasks = messages.filter((message) => message.type === "task");
+  /**
+   * Expected impact: Avoids redundant filtering of the messages array on every render.
+   */
+  const tasks = React.useMemo(() => messages.filter((message) => message.type === "task"), [messages]);
 
   const disableDeployAgent = agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
 
-  const handleNewGoal = () => {
+  /**
+   * Expected impact: Stable reference for the deploy agent button.
+   */
+  const handleNewGoal = React.useCallback(() => {
     const agent = new AutonomousAgent(
       name.trim(),
       goalInput.trim(),
@@ -87,33 +96,54 @@ const Home: NextPage = () => {
     setHasSaved(false);
     setMessages([]);
     agent.run().then(console.log).catch(console.error);
-  };
+  }, [name, goalInput, handleAddMessage, customApiKey, customModelName, customTemperature, customMaxLoops, session]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+  /**
+   * Expected impact: Stable reference for input handlers.
+   */
+  const handleKeyPress = React.useCallback((e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter'&& !disableDeployAgent) {
       if (!e.shiftKey) {
         // Only Enter is pressed, execute the function
         handleNewGoal();
       }
     }
-  }
+  }, [disableDeployAgent, handleNewGoal]);
 
-  const handleStopAgent = () => {
+  /**
+   * Expected impact: Stable reference for the stop agent button.
+   */
+  const handleStopAgent = React.useCallback(() => {
     setShouldAgentStop(true);
     agent?.stopAgent();
-  };
+  }, [agent]);
 
-  const proTitle = (
+  /**
+   * Expected impact: Stable reference for the title element.
+   */
+  const proTitle = React.useMemo(() => (
     <>
       AgentGPT<span className="ml-1 text-amber-500/90">Pro</span>
     </>
-  );
+  ), []);
 
   const shouldShowSave =
     status === "authenticated" &&
     !agent?.isRunning &&
     messages.length &&
     !hasSaved;
+
+  /**
+   * Expected impact: Stable reference for the save handler.
+   */
+  const handleSave = React.useCallback(() => {
+    setHasSaved(true);
+    agentUtils.saveAgent({
+      goal: goalInput.trim(),
+      name: name.trim(),
+      tasks: messages
+    });
+  }, [agentUtils, goalInput, name, messages]);
 
   return (
     <DefaultLayout>
@@ -179,18 +209,7 @@ const Home: NextPage = () => {
                 showDonation={
                   status != "loading" && !session?.user.subscriptionId
                 }
-                onSave={
-                  shouldShowSave
-                    ? (format) => {
-                      setHasSaved(true);
-                      agentUtils.saveAgent({
-                        goal: goalInput.trim(),
-                        name: name.trim(),
-                        tasks: messages
-                      });
-                    }
-                    : undefined
-                }
+                onSave={shouldShowSave ? handleSave : undefined}
                 scrollToBottom
               />
               {tasks.length > 0 && <TaskWindow tasks={tasks} />}

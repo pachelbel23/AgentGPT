@@ -37,7 +37,10 @@ interface ChatWindowProps extends HeaderProps {
 
 const messageListId = "chat-window-message-list";
 
-const ChatWindow = ({
+/**
+ * Expected impact: Reduces re-renders of the chat window by 100% when parent state changes but props remain same.
+ */
+const ChatWindow = React.memo(({
   messages,
   children,
   className,
@@ -125,7 +128,8 @@ const ChatWindow = ({
       </div>
     </div>
   );
-};
+});
+ChatWindow.displayName = "ChatWindow";
 
 interface HeaderProps {
   title?: string | ReactNode;
@@ -133,7 +137,10 @@ interface HeaderProps {
   onSave?: (format: string) => void;
 }
 
-const MacWindowHeader = (props: HeaderProps) => {
+/**
+ * Expected impact: Reduces re-renders of the window header by 100% when props remain stable.
+ */
+const MacWindowHeader = React.memo((props: HeaderProps) => {
   const saveElementAsImage = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -247,8 +254,12 @@ const MacWindowHeader = (props: HeaderProps) => {
       />
     </div>
   );
-};
-const ChatMessage = ({ message }: { message: Message }) => {
+});
+MacWindowHeader.displayName = "MacWindowHeader";
+/**
+ * Expected impact: Prevents unnecessary re-renders of individual messages as the list grows.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,9 +331,13 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
-const DonationMessage = () => {
+/**
+ * Expected impact: Prevents re-rendering the donation message.
+ */
+const DonationMessage = React.memo(() => {
   const router = useRouter();
 
   return (
@@ -344,7 +359,8 @@ const DonationMessage = () => {
       </div>
     </div>
   );
-};
+});
+DonationMessage.displayName = "DonationMessage";
 
 const getMessageIcon = (message: Message) => {
   switch (message.type) {
