@@ -66,15 +66,18 @@ const Home: NextPage = () => {
     }
   }, [agent]);
 
-  const handleAddMessage = (message: Message) => {
+  const handleAddMessage = React.useCallback((message: Message) => {
     setMessages((prev) => [...prev, message]);
-  };
+  }, []);
 
-  const tasks = messages.filter((message) => message.type === "task");
+  const tasks = React.useMemo(
+    () => messages.filter((message) => message.type === "task"),
+    [messages]
+  );
 
   const disableDeployAgent = agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
 
-  const handleNewGoal = () => {
+  const handleNewGoal = React.useCallback(() => {
     const agent = new AutonomousAgent(
       name.trim(),
       goalInput.trim(),
@@ -87,21 +90,37 @@ const Home: NextPage = () => {
     setHasSaved(false);
     setMessages([]);
     agent.run().then(console.log).catch(console.error);
-  };
+  }, [
+    name,
+    goalInput,
+    handleAddMessage,
+    customApiKey,
+    customModelName,
+    customTemperature,
+    customMaxLoops,
+    session,
+  ]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter'&& !disableDeployAgent) {
-      if (!e.shiftKey) {
-        // Only Enter is pressed, execute the function
-        handleNewGoal();
+  const handleKeyPress = React.useCallback(
+    (
+      e:
+        | React.KeyboardEvent<HTMLInputElement>
+        | React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
+      if (e.key === "Enter" && !disableDeployAgent) {
+        if (!e.shiftKey) {
+          // Only Enter is pressed, execute the function
+          handleNewGoal();
+        }
       }
-    }
-  }
+    },
+    [disableDeployAgent, handleNewGoal]
+  );
 
-  const handleStopAgent = () => {
+  const handleStopAgent = React.useCallback(() => {
     setShouldAgentStop(true);
     agent?.stopAgent();
-  };
+  }, [agent]);
 
   const proTitle = (
     <>
@@ -181,14 +200,14 @@ const Home: NextPage = () => {
                 }
                 onSave={
                   shouldShowSave
-                    ? (format) => {
-                      setHasSaved(true);
-                      agentUtils.saveAgent({
-                        goal: goalInput.trim(),
-                        name: name.trim(),
-                        tasks: messages
-                      });
-                    }
+                    ? () => {
+                        setHasSaved(true);
+                        agentUtils.saveAgent({
+                          goal: goalInput.trim(),
+                          name: name.trim(),
+                          tasks: messages,
+                        });
+                      }
                     : undefined
                 }
                 scrollToBottom
