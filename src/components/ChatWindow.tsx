@@ -37,7 +37,10 @@ interface ChatWindowProps extends HeaderProps {
 
 const messageListId = "chat-window-message-list";
 
-const ChatWindow = ({
+/**
+ * Expected impact: Prevents re-renders of the entire chat window when parent state changes.
+ */
+const ChatWindow = React.memo(({
   messages,
   children,
   className,
@@ -125,7 +128,8 @@ const ChatWindow = ({
       </div>
     </div>
   );
-};
+});
+ChatWindow.displayName = "ChatWindow";
 
 interface HeaderProps {
   title?: string | ReactNode;
@@ -133,7 +137,7 @@ interface HeaderProps {
   onSave?: (format: string) => void;
 }
 
-const MacWindowHeader = (props: HeaderProps) => {
+const MacWindowHeader = React.memo((props: HeaderProps) => {
   const saveElementAsImage = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -247,8 +251,13 @@ const MacWindowHeader = (props: HeaderProps) => {
       />
     </div>
   );
-};
-const ChatMessage = ({ message }: { message: Message }) => {
+});
+MacWindowHeader.displayName = "MacWindowHeader";
+
+/**
+ * Expected impact: Prevents re-renders of previous messages as new ones are added or when the user is typing.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,9 +329,10 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
-const DonationMessage = () => {
+const DonationMessage = React.memo(() => {
   const router = useRouter();
 
   return (
@@ -344,7 +354,8 @@ const DonationMessage = () => {
       </div>
     </div>
   );
-};
+});
+DonationMessage.displayName = "DonationMessage";
 
 const getMessageIcon = (message: Message) => {
   switch (message.type) {
