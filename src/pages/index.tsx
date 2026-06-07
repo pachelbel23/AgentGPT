@@ -70,9 +70,17 @@ const Home: NextPage = () => {
     setMessages((prev) => [...prev, message]);
   };
 
-  const tasks = messages.filter((message) => message.type === "task");
+  /**
+   * Expected impact: Prevents re-filtering the messages array on every render,
+   * which is especially beneficial when typing in the name/goal inputs.
+   */
+  const tasks = React.useMemo(
+    () => messages.filter((message) => message.type === "task"),
+    [messages]
+  );
 
-  const disableDeployAgent = agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
+  const disableDeployAgent =
+    agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
 
   const handleNewGoal = () => {
     const agent = new AutonomousAgent(
