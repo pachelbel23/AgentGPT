@@ -37,7 +37,11 @@ interface ChatWindowProps extends HeaderProps {
 
 const messageListId = "chat-window-message-list";
 
-const ChatWindow = ({
+/**
+ * Expected impact: Reduces re-renders of the entire chat window and its messages.
+ * This is crucial as the number of messages grows.
+ */
+const ChatWindow = React.memo(({
   messages,
   children,
   className,
@@ -125,7 +129,7 @@ const ChatWindow = ({
       </div>
     </div>
   );
-};
+});
 
 interface HeaderProps {
   title?: string | ReactNode;
@@ -133,7 +137,10 @@ interface HeaderProps {
   onSave?: (format: string) => void;
 }
 
-const MacWindowHeader = (props: HeaderProps) => {
+/**
+ * Expected impact: Prevents unnecessary re-renders of the chat window header.
+ */
+const MacWindowHeader = React.memo((props: HeaderProps) => {
   const saveElementAsImage = (elementId: string) => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -247,8 +254,13 @@ const MacWindowHeader = (props: HeaderProps) => {
       />
     </div>
   );
-};
-const ChatMessage = ({ message }: { message: Message }) => {
+});
+MacWindowHeader.displayName = "MacWindowHeader";
+
+/**
+ * Expected impact: Prevents re-rendering of existing messages when new ones are added.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,9 +332,13 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
-const DonationMessage = () => {
+/**
+ * Expected impact: Prevents unnecessary re-renders of the donation message.
+ */
+const DonationMessage = React.memo(() => {
   const router = useRouter();
 
   return (
@@ -344,7 +360,8 @@ const DonationMessage = () => {
       </div>
     </div>
   );
-};
+});
+DonationMessage.displayName = "DonationMessage";
 
 const getMessageIcon = (message: Message) => {
   switch (message.type) {
@@ -372,5 +389,6 @@ const getMessagePrefix = (message: Message) => {
   }
 };
 
+ChatWindow.displayName = "ChatWindow";
 export default ChatWindow;
 export { ChatMessage };
