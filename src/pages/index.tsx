@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { type NextPage } from "next";
 import Badge from "../components/Badge";
 import DefaultLayout from "../layout/default";
@@ -70,7 +70,13 @@ const Home: NextPage = () => {
     setMessages((prev) => [...prev, message]);
   };
 
-  const tasks = messages.filter((message) => message.type === "task");
+  /**
+   * Expected impact: Avoids re-filtering the messages array on every render.
+   */
+  const tasks = useMemo(
+    () => messages.filter((message) => message.type === "task"),
+    [messages]
+  );
 
   const disableDeployAgent = agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
 
