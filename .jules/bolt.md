@@ -1,0 +1,3 @@
+## 2025-05-15 - [ChatWindow Render Bottleneck]
+**Learning:** The scrolling `useEffect` in `ChatWindow.tsx` lacked a dependency array, causing it to trigger on every render. Combined with un-memoized message components, this led to significant UI lag as the chat history grew, as every new message caused a full re-render and re-calculation of scroll positions for the entire list.
+**Action:** Always verify that `useEffect` hooks, especially those manipulating the DOM like scroll management, have exhaustive dependency arrays. Pair this with `React.memo` on list items to minimize the work done during each render cycle.
