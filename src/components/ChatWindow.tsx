@@ -68,7 +68,7 @@ const ChatWindow = ({
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [scrollToBottom, hasUserScrolled, messages]);
 
   return (
     <div
@@ -248,7 +248,12 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+
+/**
+ * Expected impact: Prevents unnecessary re-renders of historical messages
+ * as new messages are added to the chat history.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +325,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
