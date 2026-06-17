@@ -1,0 +1,3 @@
+## 2026-06-17 - [Optimized auto-scroll useEffect and list item components]
+**Learning:** The `useEffect` hook in `ChatWindow.tsx` responsible for auto-scrolling was missing a dependency array, causing it to execute on every render. This is particularly expensive in a chat application where frequent state updates (like typing or incoming messages) occur. Additionally, list items like `ChatMessage` and `Task` were re-rendering unnecessarily.
+**Action:** Always check `useEffect` hooks in high-frequency components for missing dependency arrays. Memoize list item components in long lists to prevent cascading re-renders when parent state updates.
