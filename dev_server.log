@@ -1,0 +1,53 @@
+
+> agent-gpt@0.1.0 dev
+> next dev
+
+(node:95897) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:95909) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/etc/credstore'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/etc/credstore.encrypted'
+[32mready[39m - started server on 0.0.0.0:3000, url: http://localhost:3000
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/opt/containerd'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/home/ubuntu'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/root/.launchpadlib'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/root/.ssh'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/run/containerd'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/run/docker'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/run/sudo'
+Watchpack Error (watcher): Error: EACCES: permission denied, watch '/tmp/systemd-private-368a2f928fdb4f8189931ac81a2e3759-systemd-logind.service-WPO75P'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/etc/credstore'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/etc/credstore.encrypted'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/opt/containerd'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/home/ubuntu'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/root/.launchpadlib'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/root/.ssh'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/run/containerd'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/run/docker'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/run/sudo'
+Watchpack Error (initial scan): Error: EACCES: permission denied, scandir '/tmp/systemd-private-368a2f928fdb4f8189931ac81a2e3759-systemd-logind.service-WPO75P'
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[35mevent[39m - compiled client and server successfully in 2.9s (302 modules)
+[36mwait[39m  - compiling / (client and server)...
+[35mevent[39m - compiled client and server successfully in 8.1s (1321 modules)
+[36mwait[39m  - compiling /api/auth/[...nextauth] (client and server)...
+[35mevent[39m - compiled successfully in 194 ms (120 modules)
+[36mwait[39m  - compiling /src/middleware (client and server)...
+[35mevent[39m - compiled successfully in 655 ms (207 modules)
+[36mwait[39m  - compiling /api/agent/start (client and server)...
+[31merror[39m - uncaughtException: Error: aborted
+[90m    at abortIncoming (node:_http_server:838:17)[39m
+[90m    at socketOnClose (node:_http_server:832:3)[39m
+[90m    at Socket.emit (node:events:531:35)[39m
+[90m    at TCP.<anonymous> (node:net:346:12)[39m {
+  code: [32m'ECONNRESET'[39m
+}
+[35mevent[39m - compiled successfully in 581 ms (344 modules)
+Failed to record analytics [TypeError: Failed to parse URL from ]
+[36mwait[39m  - compiling /api/agent/execute (client and server)...
+[35mevent[39m - compiled successfully in 172 ms (346 modules)
+Failed to record analytics [TypeError: Failed to parse URL from ]
+Failed to record analytics [TypeError: Failed to parse URL from ]
