@@ -68,7 +68,7 @@ const ChatWindow = ({
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [scrollToBottom, hasUserScrolled, messages]);
 
   return (
     <div
