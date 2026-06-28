@@ -90,7 +90,7 @@ const ChatWindow = ({
       >
         {messages.map((message, index) => (
           <FadeIn key={`${index}-${message.type}`}>
-            <ChatMessage message={message} />
+            <MemoizedChatMessage message={message} />
           </FadeIn>
         ))}
         {children}
@@ -98,7 +98,7 @@ const ChatWindow = ({
         {messages.length === 0 && (
           <>
             <Expand delay={0.8} type="spring">
-              <ChatMessage
+              <MemoizedChatMessage
                 message={{
                   type: "system",
                   value:
@@ -107,7 +107,7 @@ const ChatWindow = ({
               />
             </Expand>
             <Expand delay={0.9} type="spring">
-              <ChatMessage
+              <MemoizedChatMessage
                 message={{
                   type: "system",
                   value:
@@ -373,4 +373,5 @@ const getMessagePrefix = (message: Message) => {
 };
 
 export default ChatWindow;
-export { ChatMessage };
+const MemoizedChatMessage = React.memo(ChatMessage);
+export { MemoizedChatMessage as ChatMessage };

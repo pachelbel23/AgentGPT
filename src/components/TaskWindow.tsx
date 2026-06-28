@@ -16,7 +16,7 @@ export const TaskWindow = ({ tasks }: TaskWindowProps) => {
       <div className="window-heights mb-2 w-full px-1 ">
         <div className="flex flex-col gap-2 overflow-y-auto overflow-x-hidden">
           {tasks.map((task, i) => (
-            <Task key={i} task={task} />
+            <MemoizedTask key={i} task={task} />
           ))}
         </div>
       </div>
@@ -33,3 +33,5 @@ const Task = ({ task }: { task: Message }) => {
     </FadeIn>
   );
 };
+
+const MemoizedTask = React.memo(Task);
