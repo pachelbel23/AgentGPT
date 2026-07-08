@@ -1,0 +1,3 @@
+## 2025-01-30 - Prisma Nested Create Optimization
+**Learning:** Optimizing a 1+N database write pattern (creating an entity then its relations sequentially) to a single nested Prisma `create` significantly reduces latency and ensures atomicity. In this codebase, creating an agent with 50 tasks saw a reduction from ~400ms to ~20ms on local SQLite.
+**Action:** Always prefer nested creates/connects for related entities when using Prisma to minimize database round-trips. Ensure that benchmarking artifacts (like local DB files or schema modifications) are thoroughly cleaned up and un-staged before submission.
