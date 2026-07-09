@@ -1,0 +1,3 @@
+## 2025-07-09 - Prisma Nested Create Optimization
+**Learning:** Refactoring sequential database writes (1+N) to a single nested Prisma create significantly reduces latency (from ~315ms to ~18ms for 50 tasks). However, benchmarking in this environment using `./prisma/useSqlite.sh` modifies `schema.prisma` by changing the provider and removing MySQL-specific `@db.Text` attributes, which can lead to production regressions if accidentally committed.
+**Action:** Always restore the original `prisma/schema.prisma` and re-run `npx prisma generate` after benchmarking. Verify `git status` to ensure no database configuration changes are staged for commitment.
