@@ -13,7 +13,7 @@ export const accountRouter = createTRPCRouter({
   subscribe: protectedProcedure.mutation(async ({ ctx }) => {
     const user = await prisma.user.findUniqueOrThrow({
       where: {
-        id: ctx.session?.user?.id,
+        id: ctx.session.user.id,
       },
     });
 
@@ -31,21 +31,21 @@ export const accountRouter = createTRPCRouter({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       customer: user.customerId ?? undefined,
       customer_email: user.email ?? undefined,
-      client_reference_id: ctx.session?.user?.id,
+      client_reference_id: ctx.session.user.id,
       metadata: {
-        userId: ctx.session?.user?.id,
+        userId: ctx.session.user.id,
       },
     });
 
     return checkoutSession.url;
   }),
   manage: protectedProcedure.mutation(async ({ ctx }) => {
-    if (!ctx.session?.user?.subscriptionId) {
+    if (!ctx.session.user.subscriptionId) {
       return null;
     }
 
     const sub = await stripe.subscriptions.retrieve(
-      ctx.session?.user?.subscriptionId
+      ctx.session.user.subscriptionId
     );
 
     const session = await stripe.billingPortal.sessions.create({
