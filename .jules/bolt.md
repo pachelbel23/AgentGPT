@@ -1,0 +1,3 @@
+## 2025-01-30 - Prisma Nested Create Optimization & Benchmarking Artifacts
+**Learning:** Refactoring sequential database writes into a single nested Prisma create significantly improves performance (~92% reduction in latency for 50 tasks). However, modifying `prisma/schema.prisma` (e.g., switching provider to sqlite) or adding `@db.Text` changes to facilitate local benchmarking are architectural regressions if committed.
+**Action:** Always restore `prisma/schema.prisma` to its original state and ensure all temporary benchmarking scripts and local database files are deleted and unstaged before submission.
