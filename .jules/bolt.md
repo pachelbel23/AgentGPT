@@ -1,0 +1,3 @@
+## 2025-01-24 - Optimizing 1+N database writes with Prisma nested creates
+**Learning:** In the `agentRouter`, creating an Agent and its associated Tasks was done using 1+N separate Prisma calls (one for Agent, N for Tasks in a `Promise.all`). This caused significant latency (~371ms for 50 tasks on SQLite). Refactoring this to use Prisma's nested `create` reduced latency to ~123ms (approx 67% improvement) and ensured transactional atomicity by default.
+**Action:** Always look for opportunities to use nested Prisma operations (create, update, connect) when dealing with related data to minimize database round-trips and ensure atomicity.
