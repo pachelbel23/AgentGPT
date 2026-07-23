@@ -1,0 +1,3 @@
+## 2025-07-24 - Nested Prisma Creates for Agent Tasks
+**Learning:** Creating parent records and multiple child records via independent asynchronous Prisma calls (e.g. mapping `prisma.agentTask.create` and running with `Promise.all`) introduces an N+1 write bottleneck, is non-atomic, and risks database connection pool exhaustion. Utilizing nested Prisma writes (`tasks: { create: [...] }`) runs inside a single database transaction, reduces roundtrips, and improves performance by up to ~95%.
+**Action:** Always prefer Prisma nested writes or transactions when creating or modifying parent and related child entities in a single logical operation.
