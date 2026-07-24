@@ -68,7 +68,7 @@ const ChatWindow = ({
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [messages, scrollToBottom, hasUserScrolled]);
 
   return (
     <div
@@ -248,7 +248,11 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+/**
+ * Optimization: Wrap ChatMessage in React.memo to avoid re-rendering existing messages
+ * when new ones are appended. This reduces frontend rendering cost from O(N) to O(1).
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +324,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();

@@ -24,7 +24,11 @@ export const TaskWindow = ({ tasks }: TaskWindowProps) => {
   );
 };
 
-const Task = ({ task }: { task: Message }) => {
+/**
+ * Optimization: Wrap Task in React.memo to prevent unnecessary re-rendering of existing
+ * task components when new ones are added to the list. Reduces render cost from O(N) to O(1).
+ */
+const Task = React.memo(({ task }: { task: Message }) => {
   return (
     <FadeIn>
       <div className="w-full rounded-md border-2 border-white/20 p-2 text-sm text-white hover:border-white/40">
@@ -32,4 +36,5 @@ const Task = ({ task }: { task: Message }) => {
       </div>
     </FadeIn>
   );
-};
+});
+Task.displayName = "Task";

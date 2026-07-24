@@ -1,0 +1,3 @@
+## 2026-05-28 - [Nested Prisma Writes and List Item Memoization]
+**Learning:** Sequential Prisma queries inside a map/loop (such as creating agent tasks individually) lead to O(N) database roundtrips and high latency. Moving them into a nested prisma query reduces database roundtrips to 1 and ensures transaction atomicity. On the frontend, not memoizing list-item components (like ChatMessage or Task) triggers O(N) unnecessary re-renders when elements are appended. Furthermore, a useEffect without a dependency array executes on every render, causing overhead.
+**Action:** Use nested Prisma writes where applicable to batch DB queries. Wrap list items in React.memo and define proper dependencies for useEffect hooks to keep re-renders at O(1).
