@@ -62,13 +62,13 @@ const ChatWindow = ({
   };
 
   useEffect(() => {
-    // Scroll to bottom on re-renders
+    // Scroll to bottom on re-renders when relevant scroll state or message count changes
     if (scrollToBottom && scrollRef && scrollRef.current) {
       if (!hasUserScrolled) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [messages, scrollToBottom, hasUserScrolled]);
 
   return (
     <div
@@ -82,7 +82,7 @@ const ChatWindow = ({
         className={clsx(
           "mb-2 mr-2 ",
           (fullscreen && "max-h-[75vh] flex-grow overflow-auto") ||
-          "window-heights"
+            "window-heights"
         )}
         ref={scrollRef}
         onScroll={handleScroll}
@@ -187,7 +187,6 @@ const MacWindowHeader = (props: HeaderProps) => {
     }
   };
 
-
   const exportOptions = [
     <WindowButton
       key="Image"
@@ -248,7 +247,7 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -311,8 +310,9 @@ const ChatMessage = ({ message }: { message: Message }) => {
           </span>
         ) : (
           <span
-            className={`absolute bottom-0 right-0 rounded-full border-2 border-white/30 bg-zinc-800 p-1 px-2 ${showCopy ? "visible" : "hidden"
-              }`}
+            className={`absolute bottom-0 right-0 rounded-full border-2 border-white/30 bg-zinc-800 p-1 px-2 ${
+              showCopy ? "visible" : "hidden"
+            }`}
           >
             <FaCopy className="text-white-300 cursor-pointer" />
           </span>
@@ -320,7 +320,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
