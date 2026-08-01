@@ -1,0 +1,3 @@
+## 2026-08-01 - Preventing O(N) Re-renders and Redundant DOM Operations in Agent Chat/Task Lists
+**Learning:** In chat-based and task-based list views, list item components (`ChatMessage`, `Task`) get re-rendered recursively on any parent update or even when individual list items don't change. Wrapping these components in `React.memo` with explicit `displayName`s avoids O(N) re-renders. Additionally, layout-scrolling `useEffect` hooks without dependency arrays trigger on every single render, causing redundant DOM calculations.
+**Action:** Always wrap chat and list-item components in `React.memo` with explicit `displayName` properties, and specify full dependency arrays for scroll/layout effects to avoid redundant DOM writes.

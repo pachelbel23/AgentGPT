@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
 import {
   FaBrain,
   FaClipboard,
@@ -68,7 +68,7 @@ const ChatWindow = ({
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [scrollToBottom, hasUserScrolled, messages]);
 
   return (
     <div
@@ -248,7 +248,8 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+// Wrapping ChatMessage in React.memo to prevent unnecessary O(N) re-renders
+const ChatMessage = memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +321,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
