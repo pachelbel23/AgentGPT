@@ -1,0 +1,3 @@
+## 2025-07-24 - Optimize Agent Creation Database Write Performance
+**Learning:** Sequential/concurrent N+1 database inserts (e.g., creating an Agent and then inserting multiple Tasks asynchronously using `Promise.all`) create significant roundtrip latencies and lack transaction transactional safety. Collapsing these inserts into a single nested create query is highly optimized by Prisma, reducing database execution overhead.
+**Action:** Use nested relation writes (`tasks: { create: [...] }`) in Prisma instead of map-based individual `create` calls to maximize batch insert performance and maintain database transaction atomicity.
