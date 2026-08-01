@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { FaListAlt } from "react-icons/fa";
 import FadeIn from "./motions/FadeIn";
 import Expand from "./motions/expand";
@@ -24,7 +24,7 @@ export const TaskWindow = ({ tasks }: TaskWindowProps) => {
   );
 };
 
-const Task = ({ task }: { task: Message }) => {
+const Task = memo(({ task }: { task: Message }) => {
   return (
     <FadeIn>
       <div className="w-full rounded-md border-2 border-white/20 p-2 text-sm text-white hover:border-white/40">
@@ -32,4 +32,5 @@ const Task = ({ task }: { task: Message }) => {
       </div>
     </FadeIn>
   );
-};
+});
+Task.displayName = "Task";
