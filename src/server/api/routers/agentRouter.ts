@@ -14,27 +14,26 @@ export const agentRouter = createTRPCRouter({
   create: protectedProcedure
     .input(saveAgentParser)
     .mutation(async ({ input, ctx }) => {
+      // PERFORMANCE OPTIMIZATION:
+      // Instead of sequential 1+N database writes (creating agent and then doing sequential creations for all tasks),
+      // we utilize Prisma's nested writes. This creates the Agent and all associated AgentTasks in a single,
+      // atomic database roundtrip/transaction.
       const agent = await prisma.agent.create({
         data: {
           name: input.name,
           goal: input.goal,
-          userId: ctx.session?.user?.id,
+          userId: ctx.session.user.id,
+          tasks: {
+            create: input.tasks.map((e, i) => ({
+              type: e.type,
+              info: e.info,
+              value: e.value,
+              sort: i,
+            })),
+          },
         },
       });
 
-      const all = input.tasks.map((e, i) => {
-        return prisma.agentTask.create({
-          data: {
-            agentId: agent.id,
-            type: e.type,
-            info: e.info,
-            value: e.value,
-            sort: i,
-          },
-        });
-      });
-
-      await Promise.all(all);
       return agent;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
