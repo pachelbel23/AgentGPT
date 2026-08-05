@@ -62,13 +62,13 @@ const ChatWindow = ({
   };
 
   useEffect(() => {
-    // Scroll to bottom on re-renders
+    // Scroll to bottom on re-renders when relevant dependencies change
     if (scrollToBottom && scrollRef && scrollRef.current) {
       if (!hasUserScrolled) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
-  });
+  }, [messages, scrollToBottom, hasUserScrolled]);
 
   return (
     <div
@@ -248,7 +248,7 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +320,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
