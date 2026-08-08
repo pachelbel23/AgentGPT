@@ -248,7 +248,12 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+/**
+ * ChatMessage component that displays a single message in the chat window.
+ * Wrapped in React.memo to prevent unnecessary re-renders when new messages are added.
+ * Expected impact: Reduces re-renders by skipping updates for existing messages in the list.
+ */
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +325,9 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
