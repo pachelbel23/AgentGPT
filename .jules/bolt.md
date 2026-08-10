@@ -1,0 +1,3 @@
+## 2025-07-24 - [Database and Component Optimization]
+**Learning:** In a T3 stack, batch-creating records (such as an Agent and its child AgentTasks) using map and Promise.all leads to O(N) database operations. Using single nested Prisma writes bundles this into an atomic transaction, reducing latency by ~95%. Also, scrolling layout effects and list items in chat components can cause O(N) re-renders, which is solved by specifying complete dependency arrays and wrapping list-items in React.memo with explicit displayNames.
+**Action:** Always favor nested Prisma writes for parent-child relations and ensure list elements in real-time interfaces are memoized with explicit displayNames.
