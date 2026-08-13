@@ -14,33 +14,31 @@ export const agentRouter = createTRPCRouter({
   create: protectedProcedure
     .input(saveAgentParser)
     .mutation(async ({ input, ctx }) => {
+      // PERFORMANCE OPTIMIZATION: Use nested Prisma write to create Agent and AgentTasks
+      // in a single, atomic database transaction instead of multiple O(N) sequential queries.
+      // This reduces database round-trips from N+1 to 1, significantly improving latency.
       const agent = await prisma.agent.create({
         data: {
           name: input.name,
           goal: input.goal,
-          userId: ctx.session?.user?.id,
+          userId: ctx.session.user.id,
+          tasks: {
+            create: input.tasks.map((e, i) => ({
+              type: e.type,
+              info: e.info,
+              value: e.value,
+              sort: i,
+            })),
+          },
         },
       });
 
-      const all = input.tasks.map((e, i) => {
-        return prisma.agentTask.create({
-          data: {
-            agentId: agent.id,
-            type: e.type,
-            info: e.info,
-            value: e.value,
-            sort: i,
-          },
-        });
-      });
-
-      await Promise.all(all);
       return agent;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return prisma.agent.findMany({
       where: {
-        userId: ctx.session?.user?.id,
+        userId: ctx.session.user.id,
         deleteDate: null,
       },
       orderBy: { createDate: "desc" },
@@ -67,7 +65,7 @@ export const agentRouter = createTRPCRouter({
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
       await prisma.agent.updateMany({
-        where: { id: input, userId: ctx.session?.user?.id },
+        where: { id: input, userId: ctx.session.user.id },
         data: {
           deleteDate: new Date(),
         },
