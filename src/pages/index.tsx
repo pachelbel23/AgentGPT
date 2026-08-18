@@ -70,7 +70,10 @@ const Home: NextPage = () => {
     setMessages((prev) => [...prev, message]);
   };
 
-  const tasks = messages.filter((message) => message.type === "task");
+  const tasks = React.useMemo(
+    () => messages.filter((message) => message.type === "task"),
+    [messages]
+  );
 
   const disableDeployAgent = agent != null || isEmptyOrBlank(name) || isEmptyOrBlank(goalInput);
 
