@@ -17,19 +17,29 @@ export const isArrayOfType = <T>(
   );
 };
 
+// Hoisted RegExp patterns to module scope to avoid re-allocating & compiling RegExp objects on every function call.
+const ARRAY_EXTRACT_REGEX = /(\[(?:\s*"(?:[^"\\]|\\.)*"\s*,?)+\s*\])/;
+const NO_TASK_REGEX =
+  /^No( (new|further|additional|extra|other))? tasks? (is )?(required|needed|added|created|inputted).*$/i;
+const TASK_COMPLETE_REGEX =
+  /^Task (complete|completed|finished|done|over|success).*/i;
+const DO_NOTHING_REGEX = /^(\s*|Do nothing(\s.*)?)$/i;
+
 export const extractTasks = (
   text: string,
   completedTasks: string[]
 ): string[] => {
+  const completedTasksList = completedTasks || [];
+  // Use Set for O(1) lookups if list has items, avoiding O(M*N) nested array search overhead.
+  const completedSet = completedTasksList.length > 0 ? new Set(completedTasksList) : null;
   return extractArray(text)
     .filter(realTasksFilter)
-    .filter((task) => !(completedTasks || []).includes(task));
+    .filter((task) => (completedSet ? !completedSet.has(task) : true));
 };
 
 export const extractArray = (inputStr: string): string[] => {
-  // Match an outer array of strings (including nested arrays)
-  const regex = /(\[(?:\s*"(?:[^"\\]|\\.)*"\s*,?)+\s*\])/;
-  const match = inputStr.match(regex);
+  // Match an outer array of strings (including nested arrays) using pre-compiled regex
+  const match = inputStr.match(ARRAY_EXTRACT_REGEX);
 
   if (match && match[0]) {
     try {
@@ -46,15 +56,9 @@ export const extractArray = (inputStr: string): string[] => {
 
 // Model will return tasks such as "No tasks added". We should filter these
 export const realTasksFilter = (input: string): boolean => {
-  const noTaskRegex =
-    /^No( (new|further|additional|extra|other))? tasks? (is )?(required|needed|added|created|inputted).*$/i;
-  const taskCompleteRegex =
-    /^Task (complete|completed|finished|done|over|success).*/i;
-  const doNothingRegex = /^(\s*|Do nothing(\s.*)?)$/i;
-
   return (
-    !noTaskRegex.test(input) &&
-    !taskCompleteRegex.test(input) &&
-    !doNothingRegex.test(input)
+    !NO_TASK_REGEX.test(input) &&
+    !TASK_COMPLETE_REGEX.test(input) &&
+    !DO_NOTHING_REGEX.test(input)
   );
 };
