@@ -248,7 +248,8 @@ const MacWindowHeader = (props: HeaderProps) => {
     </div>
   );
 };
-const ChatMessage = ({ message }: { message: Message }) => {
+// Memoized ChatMessage component to avoid expensive markdown parsing/re-renders when parent state changes or new messages arrive
+const ChatMessage = React.memo(({ message }: { message: Message }) => {
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
@@ -320,7 +321,8 @@ const ChatMessage = ({ message }: { message: Message }) => {
       </div>
     </div>
   );
-};
+});
+ChatMessage.displayName = "ChatMessage";
 
 const DonationMessage = () => {
   const router = useRouter();
