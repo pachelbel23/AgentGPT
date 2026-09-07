@@ -1,0 +1,3 @@
+## 2026-09-07 - Batch Write Optimization with Prisma Nested Creates
+**Learning:** Agent saving in `agentRouter.ts` previously suffered from an $1 + N$ database write bottleneck by executing `prisma.agent.create` followed by $N$ separate `prisma.agentTask.create` calls via `Promise.all`. Refactoring to Prisma's nested `tasks: { create: [...] }` syntax bundles the agent and all tasks into a single nested write operation, eliminating $N$ query round-trips.
+**Action:** Always prefer nested Prisma writes (`relation: { create: [...] }`) when creating parent records alongside associated child entities instead of mapping over children with separate `prisma.child.create` promises.
