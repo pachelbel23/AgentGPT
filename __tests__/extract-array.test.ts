@@ -1,4 +1,4 @@
-import { extractArray } from "../src/utils/helpers";
+import { extractArray, extractTasks, realTasksFilter } from "../src/utils/helpers";
 
 describe("Strings should be extracted from arrays correctly", () => {
   it("simple", () => {
@@ -15,5 +15,33 @@ describe("Strings should be extracted from arrays correctly", () => {
     expect(extractArray(modelResult).at(2)).toBe(
       "Integrate with external tools and services to provide users with additional features such as task prioritization and scheduling."
     );
+  });
+
+  it("handles empty or invalid array input", () => {
+    expect(extractArray("No array here")).toEqual([]);
+  });
+});
+
+describe("realTasksFilter", () => {
+  it("filters out system messages like 'No tasks added'", () => {
+    expect(realTasksFilter("No tasks added")).toBe(false);
+    expect(realTasksFilter("No further tasks needed")).toBe(false);
+    expect(realTasksFilter("Task complete")).toBe(false);
+    expect(realTasksFilter("Do nothing")).toBe(false);
+  });
+
+  it("retains valid tasks", () => {
+    expect(realTasksFilter("Analyze market trends")).toBe(true);
+    expect(realTasksFilter("Build prototype")).toBe(true);
+  });
+});
+
+describe("extractTasks", () => {
+  it("extracts and filters out completed tasks and non-tasks", () => {
+    const jsonInput = `["Task 1", "Task 2", "No tasks added"]`;
+    const completed = ["Task 1"];
+
+    const result = extractTasks(jsonInput, completed);
+    expect(result).toEqual(["Task 2"]);
   });
 });
