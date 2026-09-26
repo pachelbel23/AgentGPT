@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Combobox as ComboboxPrimitive } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
 
@@ -27,12 +27,18 @@ const Combobox = ({
     }
   };
 
-  const filteredOptions =
-    query === ""
-      ? options
-      : options.filter((opt) =>
-          opt.toLowerCase().includes(query.toLowerCase())
-        );
+  // Performance optimization:
+  // 1. Memoize filteredOptions to prevent recalculation on unrelated parent re-renders.
+  // 2. Hoist query.toLowerCase() outside the filter loop to avoid N repeated lowercasing calls.
+  const filteredOptions = useMemo(() => {
+    if (query === "") {
+      return options;
+    }
+    const lowerQuery = query.toLowerCase();
+    return options.filter((opt) =>
+      opt.toLowerCase().includes(lowerQuery)
+    );
+  }, [options, query]);
 
   return (
     <ComboboxPrimitive value={value} onChange={onChange} disabled={disabled}>
