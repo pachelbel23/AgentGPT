@@ -21,9 +21,11 @@ export const extractTasks = (
   text: string,
   completedTasks: string[]
 ): string[] => {
+  // Convert completedTasks to a Set to optimize lookup time from O(N * M) to O(N + M)
+  const completedSet = new Set(completedTasks || []);
   return extractArray(text)
     .filter(realTasksFilter)
-    .filter((task) => !(completedTasks || []).includes(task));
+    .filter((task) => !completedSet.has(task));
 };
 
 export const extractArray = (inputStr: string): string[] => {
