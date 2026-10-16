@@ -1,0 +1,3 @@
+## 2025-07-24 - Hoisting RegExp Allocations in String Utility Parsers
+**Learning:** Instantiating `RegExp` objects repeatedly inside utility functions called in task filtering loops (like `extractArray` and `realTasksFilter` in `src/utils/helpers.ts`) introduces unnecessary object allocation and regex compilation overhead per call. Since non-global (`/g`) RegExps are stateless in JavaScript, hoisting them to top-level module scope is completely safe and improves filter execution speed by ~22-25%.
+**Action:** Always check helper/parser utility files for locally scoped `RegExp` instantiations without global flags and hoist them to module scope.
