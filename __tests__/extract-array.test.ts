@@ -1,4 +1,4 @@
-import { extractArray } from "../src/utils/helpers";
+import { extractArray, extractTasks, realTasksFilter } from "../src/utils/helpers";
 
 describe("Strings should be extracted from arrays correctly", () => {
   it("simple", () => {
@@ -15,5 +15,18 @@ describe("Strings should be extracted from arrays correctly", () => {
     expect(extractArray(modelResult).at(2)).toBe(
       "Integrate with external tools and services to provide users with additional features such as task prioritization and scheduling."
     );
+  });
+
+  it("filters non-task responses correctly using realTasksFilter", () => {
+    expect(realTasksFilter("No tasks needed")).toBe(false);
+    expect(realTasksFilter("Task completed")).toBe(false);
+    expect(realTasksFilter("Do nothing")).toBe(false);
+    expect(realTasksFilter("Create marketing strategy")).toBe(true);
+  });
+
+  it("extracts and filters tasks correctly", () => {
+    const raw = '["Task completed", "Create marketing strategy", "Already done task"]';
+    const tasks = extractTasks(raw, ["Already done task"]);
+    expect(tasks).toEqual(["Create marketing strategy"]);
   });
 });
