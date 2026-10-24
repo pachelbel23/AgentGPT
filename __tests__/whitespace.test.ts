@@ -4,13 +4,21 @@ describe("WhiteSpace and empty string should return true", () => {
   test("Empty string should return true", () => {
     const emptyString = "";
     expect(isEmptyOrBlank(emptyString)).toEqual(true);
-  })
+  });
   test("WhiteSpace string should return true", () => {
     const whiteSpaceString = "    ";
     expect(isEmptyOrBlank(whiteSpaceString)).toEqual(true);
-  })
+  });
   test("NewLine should return true", () => {
     const newLineString = "\n\n";
     expect(isEmptyOrBlank(newLineString)).toEqual(true);
-  })
-})
+  });
+  test("Non-whitespace string should return false", () => {
+    const validString = "Hello World";
+    expect(isEmptyOrBlank(validString)).toEqual(false);
+  });
+  test("String with leading/trailing spaces should return false", () => {
+    const validStringWithSpaces = "  hello  ";
+    expect(isEmptyOrBlank(validStringWithSpaces)).toEqual(false);
+  });
+});
