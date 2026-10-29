@@ -1,7 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { HiCheck, HiChevronDown } from "react-icons/hi2";
 
 interface Props<T> {
@@ -16,10 +16,14 @@ interface Props<T> {
 const Combo = <T,>({ items, ...props }: Props<T>) => {
   const [query, setQuery] = useState("");
 
-  const filtered =
-    query === ""
-      ? items
-      : items.filter((e) => props.valueMapper(e).toLowerCase().includes(query.toLowerCase()));
+  // Performance optimization: Memoize filtered items and hoist query lowercasing
+  // outside of the filter loop to prevent unnecessary recalculations on re-renders
+  const { valueMapper } = props;
+  const filtered = useMemo(() => {
+    if (query === "") return items;
+    const lowerQuery = query.toLowerCase();
+    return items.filter((e) => valueMapper(e).toLowerCase().includes(lowerQuery));
+  }, [items, query, valueMapper]);
 
   return (
     <Combobox as="div" value={props.value} onChange={props.onChange}>
