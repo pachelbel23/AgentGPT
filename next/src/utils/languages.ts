@@ -33,9 +33,23 @@ export const languages: Language[] = availableLanguages.sort((a, b) =>
   a.name.localeCompare(b.name)
 );
 
+// Map lookup tables for O(1) language resolution instead of O(N) array search on every call
+const codeMap = new Map<string, Language>();
+const nameMap = new Map<string, Language>();
+
+languages.forEach((lang) => {
+  codeMap.set(lang.code, lang);
+  nameMap.set(lang.name, lang);
+});
+
 export const findLanguage = (nameOrLocale: string): Language => {
-  const selectedLanguage = languages.find(
-    (lang) => lang.code === nameOrLocale || lang.name === nameOrLocale.substring(4).trim()
-  );
-  return selectedLanguage || ENGLISH;
+  const byCode = codeMap.get(nameOrLocale);
+  if (byCode) return byCode;
+
+  if (nameOrLocale.length > 4) {
+    const byName = nameMap.get(nameOrLocale.substring(4).trim());
+    if (byName) return byName;
+  }
+
+  return ENGLISH;
 };
