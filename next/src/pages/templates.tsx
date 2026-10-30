@@ -1,6 +1,6 @@
 import type { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import nextI18NextConfig from "../../next-i18next.config.js";
 import FadeIn from "../components/motions/FadeIn";
@@ -14,12 +14,18 @@ const Templates = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("");
 
-  const filteredData = TEMPLATE_DATA.filter((model) => {
-    const matchQuery = model.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchCategory =
-      category === "" || model.category.toLowerCase() === category.toLowerCase();
-    return matchQuery && matchCategory;
-  });
+  // Bolt optimization: Memoize filtered data and hoist query lowercasing outside the loop.
+  // Prevents repeated string lowercasing calculations per filter pass and avoids re-filtering on un-related re-renders.
+  const filteredData = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const cat = category.trim().toLowerCase();
+
+    return TEMPLATE_DATA.filter((model) => {
+      const matchQuery = query === "" || model.name.toLowerCase().includes(query);
+      const matchCategory = cat === "" || model.category.toLowerCase() === cat;
+      return matchQuery && matchCategory;
+    });
+  }, [searchQuery, category]);
 
   return (
     <DashboardLayout>
