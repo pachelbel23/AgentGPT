@@ -1,7 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { HiCheck, HiChevronDown } from "react-icons/hi2";
 
 interface Props<T> {
@@ -13,13 +13,16 @@ interface Props<T> {
   icon?: ReactNode;
 }
 
-const Combo = <T,>({ items, ...props }: Props<T>) => {
+const Combo = <T,>({ items, valueMapper, ...props }: Props<T>) => {
   const [query, setQuery] = useState("");
 
-  const filtered =
-    query === ""
-      ? items
-      : items.filter((e) => props.valueMapper(e).toLowerCase().includes(query.toLowerCase()));
+  // Bolt optimization: Memoize filtered options and hoist query lowercasing outside the loop.
+  // Prevents repeated string lowercasing calculations per element during search filtering.
+  const filtered = useMemo(() => {
+    if (query === "") return items;
+    const lowerQuery = query.toLowerCase();
+    return items.filter((e) => valueMapper(e).toLowerCase().includes(lowerQuery));
+  }, [items, query, valueMapper]);
 
   return (
     <Combobox as="div" value={props.value} onChange={props.onChange}>
@@ -31,7 +34,7 @@ const Combo = <T,>({ items, ...props }: Props<T>) => {
         <Combobox.Input
           className="w-full rounded-md border-0 bg-slate-1 py-1.5 pl-3 pr-10 text-slate-12 shadow-depth-1 transition-colors sm:text-sm sm:leading-6"
           onChange={(event) => setQuery(event.target.value)}
-          displayValue={(e) => props.valueMapper(e as T)}
+          displayValue={(e) => valueMapper(e as T)}
         />
         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
           <HiChevronDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -53,7 +56,7 @@ const Combo = <T,>({ items, ...props }: Props<T>) => {
                 {({ selected }) => (
                   <>
                     <span className={clsx("block truncate", selected && "font-semibold")}>
-                      {props.valueMapper(e)}
+                      {valueMapper(e)}
                     </span>
 
                     {selected && (
